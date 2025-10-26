@@ -1,11 +1,3 @@
-# Intrusion Detection with ML
-
-
-Make sure you have **Node.js** and **npm** installed.
-
-### Steps
-
-```bash
 # 1. Clone the repository
 git clone <YOUR_GIT_URL>
 

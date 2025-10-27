@@ -1,8 +1,6 @@
 -- Lightweight IDS Experiment Database Schema
--- 轻量化IDS实验数据库架构
 
 -- Attack Labels
--- 攻击标签表
 CREATE TABLE attack_labels (
     id SERIAL PRIMARY KEY,
     label_name VARCHAR(50) UNIQUE NOT NULL
@@ -226,4 +224,5 @@ FROM class_performance cp
 JOIN experiment_results er ON cp.result_id = er.result_id
 JOIN experiments e ON er.experiment_id = e.experiment_id
 JOIN attack_labels al ON cp.label_id = al.id
+
 ORDER BY e.experiment_id, al.label_name;

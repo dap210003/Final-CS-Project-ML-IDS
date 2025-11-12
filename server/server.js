@@ -39,5 +39,34 @@ app.use(function(req, res, next) {
   next();
 });
 
+//TODO: place queries for add a specific row to db, search out a specific row for db, delete a row for db
+
+function AddDb(){
+
+
+}
+function searchDb(){
+
+
+}
+function deleteDb(){
+  
+}
+
+
+
+//TODO:ADD app.get() functions for adding to ,retrieving,and deleting from database.
+//pool.query() to put in requests to db.
+app.get('/',(req,res)=>{//get response: send DATA back to front end
+
+})
+app.post('/',(req,res)=>{//post response:should cover same idea as get, maybe could use this to cover other retrieval stuff?
+
+})
+app.put('/',(req,res)=>{//place data into the database from the front end??
+
+})
+
+
 app.listen(PORT1,()=>console.log('Listening on port'+PORT1));//establishes connection looking to specific port
 

@@ -38,32 +38,56 @@ app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
-
 //TODO: place queries for add a specific row to db, search out a specific row for db, delete a row for db
 
-function AddDb(){
+async function AddDb(/*information for each table should go here */id){//this should add the given item to the particular node
+
 
 
 }
-function searchDb(){
 
-
-}
-function deleteDb(){
-  
+async function grabAllDB(){
+  const[rows]=await pool.query('SELECT * FROM flow_records');
+  return rows;
 }
 
+async function searchDb(id){
+//grab from all necessary tables for the given item(parameters, dataset, evaluation metrics,etc.)?
+let rows=new Array(9);
+//I think this should cover everything we want to  fetch for a given environmental run?
+rows[0]=await pool.query('SELECT * FROM users WHERE user_id=?',[id]);
+rows[1]=await pool.query('SELECT * FROM ml_models WHERE model_id=?',[id]);
+rows[2]=await pool.query('SELECT * FROM model_parameters WHERE model_id=?',[id]);
+rows[3]=await pool.query('SELECT * FROM datasets WHERE dataset_id=?',[id]);
+rows[4]=await pool.query('SELECT * FROM training_runs WHERE user_id=? ',[id]);
+rows[5]=await pool.quert('SELECT * FROM run_parameters WHERE parameter_id=?',[id]);
+rows[6]=await pool.query('SELECT * FROM preprocessing_config WHERE run_id=?',[id]);
+rows[7]=await pool.query('SELECT * FROM run_results WHERE run_id=?',[id]);
+rows[8]=await pool.query('SELECT * FROM class_performance WHERE result_id=?'[id]);
+return rows;
+}
+async function deleteDb(id){//deletes given row from the record(probably use this for when we need to modify a value in system)
+  await pool.query('DELETE * FROM users WHERE user_id=?',[id]);
+  return;
+}
 
 
+app,get('/getAllEntries',async(req, res)=>{
+const item=grabAllDB();
+res.send(item);
+})
 //TODO:ADD app.get() functions for adding to ,retrieving,and deleting from database.
 //pool.query() to put in requests to db.
-app.get('/',(req,res)=>{//get response: send DATA back to front end
+//figure out what paths we want to do for the gets
+app.get('/searchDB/:id',async (req,res)=>{//get response: send DATA back to front end
+const item=await searchDb(req.params.id);
+res.send(item);
+})
+
+app.post('/',async (req,res)=>{//post response:should cover same idea as get, maybe could use this to cover other retrieval stuff?
 
 })
-app.post('/',(req,res)=>{//post response:should cover same idea as get, maybe could use this to cover other retrieval stuff?
-
-})
-app.put('/',(req,res)=>{//place data into the database from the front end??
+app.put('/',async (req,res)=>{//place data into the database from the front end??
 
 })
 

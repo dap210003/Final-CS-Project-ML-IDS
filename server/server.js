@@ -219,6 +219,31 @@ configTracker=await pool.query("INSERT INTO preprocessing_config(run_id,train_te
 
 
 //here calls to ML methods for python integration(maybe flask???)
+const spawner=require('child process').spawn;
+//data to pass in here,maybe I can use it as an array?necessary information would be parameter array, model_selected(to determine what is done), and preprocessing configurations,at least
+//array containing items to pass. make sure to use JSON.stringify()on the array to properly pass it
+mlDataPass=new Array(7);//this is the array to pass
+mlDataPass[0]=model_select;//modelSelect as [0], lets python process know which item to grab
+mlDataPass[1]=new Array();
+mlDataPass[1].push(parameterHolder);
+mlDataPass[2]=train_test_ratio;
+mlDataPass[3]=random_state;
+mlDataPass[4]=use_smote;
+mlDataPass[5]=smote_strategy;
+mlDataPass[6]=feature_scaling;
+const python_process=spawner("python",['./machineLearning.py',JSON.stringify(mlDataPass)]);//this calls to the python methods
+//python_process.stdout methods go here
+python_process.stdout.on('data',(data)=>{
+
+});
+
+python_process.stderr.on('data',(data) =>{
+  console.error('stderr: ${data}');
+});
+python_process.on('close',(code)=>{
+  
+});
+
 
   return true;//placeholder return value
 }

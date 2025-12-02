@@ -231,6 +231,7 @@ mlDataPass[3]=random_state;
 mlDataPass[4]=use_smote;
 mlDataPass[5]=smote_strategy;
 mlDataPass[6]=feature_scaling;
+mlDataPass[7]=training_run_id;
 const python_process=spawner("python",['./machineLearning.py',JSON.stringify(mlDataPass)]);//this calls to the python methods
 //python_process.stdout methods go here
 python_process.stdout.on('data',(data)=>{

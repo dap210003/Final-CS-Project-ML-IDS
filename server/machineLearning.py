@@ -6,14 +6,14 @@ import matplotlib.pyplot as pl
 import numpy as np
 import seaborn as sns
 from sklearn.model_selection import train_test_split
-from river import stream
+from river import stream #pip install river
 from sklearn.metrics import classification_report,confusion_matrix,accuracy_score,precision_score,recall_score,f1_score
-import lightgbm as lgbm
-import catboost as cbt
-import xgboost as xgb
-from imblearn.over_sampling import SMOTE
+import lightgbm as lgbm #pip install lightgbm
+import catboost as cbt #pip install catboost
+import xgboost as xgb #pip install xgboost
+from imblearn.over_sampling import SMOTE#pip install imbalanced-learn
 import statistics
-
+import psycopg2
 
 
 def LCCDE(train_test_split,random_status,use_smote,smote_strategy,feature_scaling,parameter_values):
@@ -225,6 +225,16 @@ def lightGBM(train_test_split,random_status,use_smote,smote_strategy,feature_sca
     perfomanceValues.append(f1ByClass)
 
     return perfomanceValues
+
+hostname='localhost'
+portid=1111
+username="user"
+database="backend"
+password='password'#don't think we need this?
+conn=None
+curr=None
+
+
 input=ast.literal_eval(sys.argv[1])##this should be the array of items being passed in
 model_select=input[0]
 train_test_split=input[2]
@@ -251,4 +261,63 @@ else:
     performanceEvaluation=LCCDE(train_test_split,random_status,use_smote,smote_strategy,feature_scaling,parameterValues)
 #send back the items in performance evaluation to the server.js file
 print(performanceEvaluation)#prints the values out,how does this get us to printing it out?
+try:
+    conn=psycopg2.connect(
+        host=hostname,
+        user=username,
+        dbname=database,
+        port=portid
+    )
+    ###here is where we place the script
+    curr=conn.cursor()
+
+    #write out insert statements to the given tables
+    table_script='INSERT INTO run_results (run_id,accuracy,precision_score,recall_score,f1_score) VALUES(%s,%s,%s,%s,%s)'
+    #input[7] should be training run id, 01234 should be accuracy,percision,recall,and f1
+    table_values=(input[7],performanceEvaluation[0],performanceEvaluation[1],performanceEvaluation[2],performanceEvaluation[3])
+    curr.execute(table_script,table_values)
+    #current assumption will be that training_run_id=result_id,THIS WILL PROBABLY NEED TO CHANGE
+    table_script2='INSERT INTO class_performance(result_id,label_id,f1_score) VALUES(%s,%s,%s)'
+    classF1s=performanceEvaluation[4]
+    #insert table values for each of the given classes of attacks seperately
+    table_value1=(input[7],0,classF1s[0])
+    curr.execute(table_script2,table_value1)
+    table_value2=(input[7],1,classF1s[1])
+    curr.execute(table_script2,table_value2)
+    table_value3=(input[7],2,classF1s[2])
+    curr.execute(table_script2,table_value3)
+    table_value4=(input[7],3,classF1s[3])
+    curr.execute(table_script2,table_value4)
+    table_value5=(input[7],4,classF1s[4])
+    curr.execute(table_script2,table_value5)
+    table_value6=(input[7],5,classF1s[5])
+    curr.execute(table_script2,table_value6)
+    table_value7=(input[7],6,classF1s[6])
+    curr.execute(table_script2,table_value7)
+    table_value8=(input[7],7,classF1s[7])
+    curr.execute(table_script2,table_value8)
+    table_value9=(input[7],8,classF1s[8])
+    curr.execute(table_script2,table_value9)
+    table_value10=(input[7],9,classF1s[9])
+    curr.execute(table_script2,table_value10)
+    table_value11=(input[7],10,classF1s[10])
+    curr.execute(table_script2,table_value11)
+    table_value12=(input[7],11,classF1s[11])
+    curr.execute(table_script2,table_value12)
+
+    conn.commit()
+    
+except Exception as error:
+    print(error)
+
+finally:
+    if curr is not None:
+        curr.close()
+    if conn is not None:
+        conn.close()
+
+#place conncetion to db at end of script, use this connection to place into database, then close connections
+
+
 sys.stdout.flush()
+##it looks like We have to make the database calls in the python script? from what it looks like, we can't 

@@ -34,7 +34,7 @@ Install the following before running the project:
 
 ```bash
 git clone <your-repo-url>
-cd cybercanvas-ai
+cd ml-ids
 ```
 
 ### 2. Frontend Setup
@@ -45,7 +45,7 @@ npm run dev
 ```
 
 Frontend runs at:  
-**http://localhost:5173**
+**http://localhost:8000**
 
 ### 3. Backend Setup
 

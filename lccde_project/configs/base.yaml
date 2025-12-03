@@ -11,13 +11,53 @@ train:
   model_type: RandomForest
   rf_n_estimators: 300
   rf_max_depth: null
-  # Drop columns that cause data leakage (IPs, timestamps, flow IDs)
+  # Drop columns that cause data leakage 
   drop_cols:
-    - Flow ID
-    - Source IP
-    - Src IP
-    - Destination IP
-    - Dst IP
-    - Timestamp
-    - Flow Bytes/s
-    - Flow Packets/s
+  # Identifiers & direct leakage
+  - Flow ID
+  - Source IP
+  - Src IP
+  - Destination IP
+  - Dst IP
+  - Timestamp
+
+  # Known CICIDS leakage features
+  - Init_Win_bytes_forward
+  - Init_Win_bytes_backward
+  - act_data_pkt_fwd
+  - min_seg_size_forward
+
+  # Artificial timing features (computed after labeling)
+  - Active Mean
+  - Active Std
+  - Active Max
+  - Active Min
+  - Idle Mean
+  - Idle Std
+  - Idle Max
+  - Idle Min
+
+  # Directional leakage
+  - Down/Up Ratio
+
+  # Synthetic segment / flow stitching artifacts
+  - Average Packet Size
+  - Avg Fwd Segment Size
+  - Avg Bwd Segment Size
+  - Subflow Fwd Packets
+  - Subflow Fwd Bytes
+  - Subflow Bwd Packets
+  - Subflow Bwd Bytes
+
+  # Bulk transfer artificial metrics
+  - Fwd Avg Bytes/Bulk
+  - Fwd Avg Packets/Bulk
+  - Fwd Avg Bulk Rate
+  - Bwd Avg Bytes/Bulk
+  - Bwd Avg Packets/Bulk
+  - Bwd Avg Bulk Rate
+
+  # Previously removed leakage
+  - Flow Bytes/s
+  - Flow Packets/s
+

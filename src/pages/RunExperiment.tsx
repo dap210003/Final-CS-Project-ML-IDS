@@ -13,9 +13,8 @@ import { useCreateExperiment, useSaveExperimentResults } from "@/hooks/useApi";
 import { useLocation } from "react-router-dom";
 
 interface ClonedParams {
-  learning_rate?: string;
-  batch_size?: string;
-  epochs?: string;
+  n_estimators?: string;
+  max_depth?: string;
   random_seed?: string;
   model?: string;
   dataset?: string;
@@ -28,9 +27,8 @@ export default function RunExperiment() {
 
   const [model, setModel] = useState("LCCDE");
   const [dataset, setDataset] = useState("CICIDS2017");
-  const [learningRate, setLearningRate] = useState("0.01");
-  const [batchSize, setBatchSize] = useState("64");
-  const [epochs, setEpochs] = useState("10");
+  const [nEstimators, setNEstimators] = useState("300");
+  const [maxDepth, setMaxDepth] = useState("");
   const [randomSeed, setRandomSeed] = useState("42");
   const [isTraining, setIsTraining] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -42,9 +40,8 @@ export default function RunExperiment() {
   // Load cloned parameters on mount
   useEffect(() => {
     if (clonedParams) {
-      if (clonedParams.learning_rate) setLearningRate(clonedParams.learning_rate);
-      if (clonedParams.batch_size) setBatchSize(clonedParams.batch_size);
-      if (clonedParams.epochs) setEpochs(clonedParams.epochs);
+      if (clonedParams.n_estimators) setNEstimators(clonedParams.n_estimators);
+      if (clonedParams.max_depth) setMaxDepth(clonedParams.max_depth);
       if (clonedParams.random_seed) setRandomSeed(clonedParams.random_seed);
       if (clonedParams.model) setModel(clonedParams.model);
       if (clonedParams.dataset) setDataset(clonedParams.dataset);
@@ -78,9 +75,8 @@ export default function RunExperiment() {
         dataset_id: 1,
         parameters: [
           { param_name: "dataset", param_value: dataset },
-          { param_name: "learning_rate", param_value: learningRate },
-          { param_name: "batch_size", param_value: batchSize },
-          { param_name: "epochs", param_value: epochs },
+          { param_name: "n_estimators", param_value: nEstimators },
+          { param_name: "max_depth", param_value: maxDepth || "None" },
           { param_name: "random_seed", param_value: randomSeed },
         ],
         notes: `Model: ${model}, Dataset: ${dataset}`,
@@ -96,7 +92,8 @@ export default function RunExperiment() {
         experiment_id: experiment.experiment_id,
         parameters: {
           random_seed: randomSeed,
-          rf_n_estimators: epochs, // Map epochs to n_estimators for RandomForest
+          rf_n_estimators: nEstimators,
+          rf_max_depth: maxDepth || null,
         },
       });
       
@@ -143,9 +140,8 @@ export default function RunExperiment() {
         dataset_id: 1, // CICIDS2017 dataset ID
         parameters: [
           { param_name: "dataset", param_value: dataset },
-          { param_name: "learning_rate", param_value: learningRate },
-          { param_name: "batch_size", param_value: batchSize },
-          { param_name: "epochs", param_value: epochs },
+          { param_name: "n_estimators", param_value: nEstimators },
+          { param_name: "max_depth", param_value: maxDepth || "None" },
           { param_name: "random_seed", param_value: randomSeed },
         ],
         notes: `Model: ${model}, Dataset: ${dataset}`,
@@ -195,7 +191,7 @@ export default function RunExperiment() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-popover border-border">
-                      <SelectItem value="LCCDE">LCCDE</SelectItem>
+                      <SelectItem value="LCCDE">LCCDE </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -213,41 +209,32 @@ export default function RunExperiment() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="learningRate">Learning rate</Label>
+                  <Label htmlFor="nEstimators">Number of Trees</Label>
                   <Input
-                    id="learningRate"
+                    id="nEstimators"
                     type="number"
-                    step="0.001"
-                    value={learningRate}
-                    onChange={(e) => setLearningRate(e.target.value)}
+                    min="1"
+                    value={nEstimators}
+                    onChange={(e) => setNEstimators(e.target.value)}
                     className="bg-input border-border"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="batchSize">Batch size</Label>
+                  <Label htmlFor="maxDepth">Max Depth </Label>
                   <Input
-                    id="batchSize"
+                    id="maxDepth"
                     type="number"
-                    value={batchSize}
-                    onChange={(e) => setBatchSize(e.target.value)}
+                    min="1"
+                    placeholder="Unlimited"
+                    value={maxDepth}
+                    onChange={(e) => setMaxDepth(e.target.value)}
                     className="bg-input border-border"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="epochs">Epochs</Label>
-                  <Input
-                    id="epochs"
-                    type="number"
-                    value={epochs}
-                    onChange={(e) => setEpochs(e.target.value)}
-                    className="bg-input border-border"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="randomSeed">Random seed</Label>
+                  <Label htmlFor="randomSeed">Random Seed</Label>
                   <Input
                     id="randomSeed"
                     type="number"

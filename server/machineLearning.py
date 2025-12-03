@@ -21,8 +21,13 @@ def LCCDE(train_test_split,random_status,use_smote,smote_strategy,feature_scalin
     #how do I store results based on class for the given items?
     perfomanceValues=list()
     #place something to read out dataset
-    df=pd.read_csv("./CICIDS2017_sample_km.csv")#this is where the path for the dataset should be. I just wrote an approximated path for the example datatset the inpyb jorunal used
+    df
+    if(dataset_select==1):
+        df=pd.read_csv("./CICIDS2017_sample_km.csv")#this is where the path for the dataset should be. I just wrote an approximated path for the example datatset the inpyb jorunal used
     #this is the x,y, x_train,y_train,x_test,y_test variables assigned
+    else:
+        df=pd.read_csv("./CICIDS2017_sample.csv")
+    #this code gives selection between two databases
     y=df['Label']
     x=df.drop(['Label'],axis=1)
     X_train,Y_train,X_test,Y_test=train_test_split(x,y,train_size=train_test_split,test_size=(1-train_test_split),random_state=random_status)
@@ -140,7 +145,11 @@ def LCCDE(train_test_split,random_status,use_smote,smote_strategy,feature_scalin
 
 def XGBoost(train_test_split,random_status,use_smote,smote_strategy,feature_scaling,parameter_values,dataset_select=0):
     perfomanceValues=list()
-    df=pd.read_csv("./CICIDS2017_sample_km.csv")#this is where the path for the dataset should be. I just wrote an approximated path for the example datatset the inpyb jorunal used
+    df
+    if(dataset_select==1):
+        df=pd.read_csv("./CICIDS2017_sample_km.csv")#this is where the path for the dataset should be. I just wrote an approximated path for the example datatset the inpyb jorunal used
+    else:
+        df=pd.read_csv("./CICIDS2017_sample.csv")
     #this is the x,y, x_train,y_train,x_test,y_test variables assigned
     y=df['Label']
     x=df.drop(['Label'],axis=1)
@@ -169,7 +178,12 @@ def XGBoost(train_test_split,random_status,use_smote,smote_strategy,feature_scal
 
 def CatBoost(train_test_split,random_status,use_smote,smote_strategy,feature_scaling,parameter_values,dataset_select=0):
     perfomanceValues=list()
-    df=pd.read_csv("./CICIDS2017_sample_km.csv")#this is where the path for the dataset should be. I just wrote an approximated path for the example datatset the inpyb jorunal used
+    df
+    if(dataset_select==1):
+        df=pd.read_csv("./CICIDS2017_sample_km.csv")#this is where the path for the dataset should be. I just wrote an approximated path for the example datatset the inpyb jorunal used
+    else:
+        df=pd.read_csv("./CICIDS2017_sample.csv")
+
     #this is the x,y, x_train,y_train,x_test,y_test variables assigned
     y=df['Label']
     x=df.drop(['Label'],axis=1)
@@ -199,7 +213,11 @@ def CatBoost(train_test_split,random_status,use_smote,smote_strategy,feature_sca
 ##arg[0] is name of the file?
 def lightGBM(train_test_split,random_status,use_smote,smote_strategy,feature_scaling,parameter_values,dataset_select):
     perfomanceValues=list()
-    df=pd.read_csv("./CICIDS2017_sample_km.csv")#this is where the path for the dataset should be. I just wrote an approximated path for the example datatset the inpyb jorunal used
+    df
+    if(dataset_select==1):
+        df=pd.read_csv("./CICIDS2017_sample_km.csv")#this is where the path for the dataset should be. I just wrote an approximated path for the example datatset the inpyb jorunal used
+    else:
+        df=pd.read_csv("./CICIDS2017_sample.csv")
     #this is the x,y, x_train,y_train,x_test,y_test variables assigned
     y=df['Label']
     x=df.drop(['Label'],axis=1)

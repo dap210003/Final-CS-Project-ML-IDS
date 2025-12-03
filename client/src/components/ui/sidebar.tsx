@@ -3,14 +3,34 @@ import { Slot } from "@radix-ui/react-slot";
 import { VariantProps, cva } from "class-variance-authority";
 import { PanelLeft } from "lucide-react";
 
-import { useIsMobile } from "@/hooks/use-mobile";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
+// Add cn utility inline 
+function cn(...inputs: (string | undefined | null | false)[]) {
+  return inputs.filter(Boolean).join(" ");
+}
+
+// Add useIsMobile hook inline
+function useIsMobile() {
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  return isMobile;
+}
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -40,7 +60,7 @@ function useSidebar() {
   return context;
 }
 
-const SidebarProvider = React.forwardRef<
+const SidebarProvider = React.forwardRef
   HTMLDivElement,
   React.ComponentProps<"div"> & {
     defaultOpen?: boolean;
@@ -128,7 +148,7 @@ const SidebarProvider = React.forwardRef<
 });
 SidebarProvider.displayName = "SidebarProvider";
 
-const Sidebar = React.forwardRef<
+const Sidebar = React.forwardRef
   HTMLDivElement,
   React.ComponentProps<"div"> & {
     side?: "left" | "right";
@@ -433,7 +453,7 @@ const sidebarMenuButtonVariants = cva(
   },
 );
 
-const SidebarMenuButton = React.forwardRef<
+const SidebarMenuButton = React.forwardRef
   HTMLButtonElement,
   React.ComponentProps<"button"> & {
     asChild?: boolean;
@@ -474,7 +494,7 @@ const SidebarMenuButton = React.forwardRef<
 });
 SidebarMenuButton.displayName = "SidebarMenuButton";
 
-const SidebarMenuAction = React.forwardRef<
+const SidebarMenuAction = React.forwardRef
   HTMLButtonElement,
   React.ComponentProps<"button"> & {
     asChild?: boolean;
@@ -525,7 +545,7 @@ const SidebarMenuBadge = React.forwardRef<HTMLDivElement, React.ComponentProps<"
 );
 SidebarMenuBadge.displayName = "SidebarMenuBadge";
 
-const SidebarMenuSkeleton = React.forwardRef<
+const SidebarMenuSkeleton = React.forwardRef
   HTMLDivElement,
   React.ComponentProps<"div"> & {
     showIcon?: boolean;
@@ -579,7 +599,7 @@ const SidebarMenuSubItem = React.forwardRef<HTMLLIElement, React.ComponentProps<
 ));
 SidebarMenuSubItem.displayName = "SidebarMenuSubItem";
 
-const SidebarMenuSubButton = React.forwardRef<
+const SidebarMenuSubButton = React.forwardRef
   HTMLAnchorElement,
   React.ComponentProps<"a"> & {
     asChild?: boolean;

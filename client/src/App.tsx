@@ -6,11 +6,19 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import RunExperiment from "./pages/RunExperiment";
+import CompareExperiments from "./pages/CompareExperiments";
 import ViewExperiments from "./pages/ViewExperiments";
 import Datasets from "./pages/Datasets";
 import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -24,9 +32,9 @@ const App = () => (
             <main className="flex-1">
               <Routes>
                 <Route path="/" element={<RunExperiment />} />
+                <Route path="/compare" element={<CompareExperiments />} />
                 <Route path="/experiments" element={<ViewExperiments />} />
                 <Route path="/datasets" element={<Datasets />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>

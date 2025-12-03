@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { Play, Eye, Database, Shield } from "lucide-react";
+import { Play, GitCompare, Eye, Database, Shield } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -12,15 +12,37 @@ import {
 } from "@/components/ui/sidebar";
 
 const menuItems = [
-  { title: "Run Experiment", url: "/", icon: Play },
-  { title: "View Experiments", url: "/experiments", icon: Eye },
-  { title: "Datasets", url: "/datasets", icon: Database },
+  { 
+    title: "Run Experiment", 
+    url: "/", 
+    icon: Play,
+    description: "Configure and run new experiments"
+  },
+  { 
+    title: "Compare Experiments", 
+    url: "/compare", 
+    icon: GitCompare,
+    description: "Compare two experiments side by side"
+  },
+  { 
+    title: "View Experiments", 
+    url: "/experiments", 
+    icon: Eye,
+    description: "Browse and view experiment results"
+  },
+  { 
+    title: "Datasets", 
+    url: "/datasets", 
+    icon: Database,
+    description: "Manage IDS datasets"
+  },
 ];
 
 export function AppSidebar() {
   return (
     <Sidebar className="border-r border-border">
       <SidebarContent>
+        {/* Logo and Title */}
         <div className="p-6 border-b border-border">
           <div className="flex items-center gap-2">
             <Shield className="h-8 w-8 text-primary" />
@@ -31,6 +53,7 @@ export function AppSidebar() {
           </div>
         </div>
         
+        {/* Navigation Menu */}
         <SidebarGroup>
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -56,6 +79,14 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {/* Footer Info */}
+        <div className="mt-auto p-4 border-t border-border">
+          <div className="text-xs text-muted-foreground space-y-1">
+            <p className="font-semibold">LCCDE Framework</p>
+            <p>Leader Class and Confidence Decision Ensemble</p>
+          </div>
+        </div>
       </SidebarContent>
     </Sidebar>
   );

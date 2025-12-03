@@ -28,6 +28,7 @@ app.use(express.json());
 app.use(cors());
 //middleware to ensure communications between front and back ends go through
 
+app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 
@@ -232,6 +233,7 @@ mlDataPass[4]=use_smote;
 mlDataPass[5]=smote_strategy;
 mlDataPass[6]=feature_scaling;
 mlDataPass[7]=training_run_id;
+mlDataPass[8]=dataset_selection
 const python_process=spawner("python",['./machineLearning.py',JSON.stringify(mlDataPass)]);//this calls to the python methods
 //python_process.stdout methods go here
 python_process.stdout.on('data',(data)=>{
@@ -302,9 +304,14 @@ res.send(item);
 app.post('/',async (req,res)=>{//post response:should cover same idea as get, maybe could use this to cover other retrieval stuff?
 
 })
-app.put('/addItem',async (req,res)=>{//place data into the database from the front end??
-
-  const item=await AddDb();
+app.post('/addItem',async (req,res)=>{//place data into the database from the front end??yes.
+  //request id,model_select,dataset_selection,user_id,parameters(array of parameters to enter)
+  //parameters to place in should be in the body of the given
+  userId=req.body['id']
+  model_select=req.body['model']
+  dataset=req.body['dataset']
+  parameters=req.body['parameters']//this should be a list of parameters for the given 
+  const item=await AddDb(userId,model_select,dataset,userId,parameters);//runs add method for given model and parameters
   res.send(item);
 })
 

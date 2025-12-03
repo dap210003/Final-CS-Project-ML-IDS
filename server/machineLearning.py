@@ -16,7 +16,7 @@ import statistics
 import psycopg2
 
 
-def LCCDE(train_test_split,random_status,use_smote,smote_strategy,feature_scaling,parameter_values):
+def LCCDE(train_test_split,random_status,use_smote,smote_strategy,feature_scaling,parameter_values,dataset_select=0):
     #run all three there models prior, then append based on class with which item would perform the best based on class?
     #how do I store results based on class for the given items?
     perfomanceValues=list()
@@ -138,7 +138,7 @@ def LCCDE(train_test_split,random_status,use_smote,smote_strategy,feature_scalin
     return perfomanceValues
 
 
-def XGBoost(train_test_split,random_status,use_smote,smote_strategy,feature_scaling,parameter_values):
+def XGBoost(train_test_split,random_status,use_smote,smote_strategy,feature_scaling,parameter_values,dataset_select=0):
     perfomanceValues=list()
     df=pd.read_csv("./CICIDS2017_sample_km.csv")#this is where the path for the dataset should be. I just wrote an approximated path for the example datatset the inpyb jorunal used
     #this is the x,y, x_train,y_train,x_test,y_test variables assigned
@@ -167,7 +167,7 @@ def XGBoost(train_test_split,random_status,use_smote,smote_strategy,feature_scal
     perfomanceValues.append(f1ByClass)
     return perfomanceValues
 
-def CatBoost(train_test_split,random_status,use_smote,smote_strategy,feature_scaling,parameter_values):
+def CatBoost(train_test_split,random_status,use_smote,smote_strategy,feature_scaling,parameter_values,dataset_select=0):
     perfomanceValues=list()
     df=pd.read_csv("./CICIDS2017_sample_km.csv")#this is where the path for the dataset should be. I just wrote an approximated path for the example datatset the inpyb jorunal used
     #this is the x,y, x_train,y_train,x_test,y_test variables assigned
@@ -197,7 +197,7 @@ def CatBoost(train_test_split,random_status,use_smote,smote_strategy,feature_sca
 
     return perfomanceValues
 ##arg[0] is name of the file?
-def lightGBM(train_test_split,random_status,use_smote,smote_strategy,feature_scaling,parameter_values):
+def lightGBM(train_test_split,random_status,use_smote,smote_strategy,feature_scaling,parameter_values,dataset_select):
     perfomanceValues=list()
     df=pd.read_csv("./CICIDS2017_sample_km.csv")#this is where the path for the dataset should be. I just wrote an approximated path for the example datatset the inpyb jorunal used
     #this is the x,y, x_train,y_train,x_test,y_test variables assigned
@@ -236,6 +236,7 @@ curr=None
 
 
 input=ast.literal_eval(sys.argv[1])##this should be the array of items being passed in
+#also need to pass in something indicating database selection? either a boolean or an int for the selection since there's two items there
 model_select=input[0]
 train_test_split=input[2]
 random_status=input[3]
@@ -243,6 +244,11 @@ use_smote=input[4]
 smote_strategy=input[5]
 feature_scaling=input[6]
 parameterValues=list(input[1])##this should be the list of parameters as needed
+#variable for selecting which dataset we're using should be here(input[7] is training_run_id, so input[8] should be the dataset selection)
+#dataset_selection=input[8]
+#make sure to ask where a dataset selection should be for
+#  
+dataset_select=input[8]#go back to server.js to place appropriate dataset_select into code
 
 
 ##list to try and store a list of values for the confusion matrix???

@@ -1,0 +1,23 @@
+project_root: .
+paths:
+  data_raw: data/raw
+  data_interim: data/interim
+  data_processed: data/processed
+  artifacts: artifacts
+train:
+  target: Label
+  test_size: 0.2
+  random_state: 42
+  model_type: RandomForest
+  rf_n_estimators: 300
+  rf_max_depth: null
+  # Drop columns that cause data leakage (IPs, timestamps, flow IDs)
+  drop_cols:
+    - Flow ID
+    - Source IP
+    - Src IP
+    - Destination IP
+    - Dst IP
+    - Timestamp
+    - Flow Bytes/s
+    - Flow Packets/s

@@ -304,11 +304,11 @@ app.post('/api/ml/train', async (req, res) => {
       
       const lines = fullOutput.split('\n');
       for (const line of lines) {
-        // Look for weighted avg line which has overall metrics
-        if (line.includes('weighted avg')) {
+        // Look for macro avg line which provides unweighted average across all classes
+        if (line.includes('macro avg')) {
           const parts = line.trim().split(/\s+/);
-          console.log('[Train] Found weighted avg:', parts);
-          // Format: "weighted avg  precision  recall  f1-score  support"
+          console.log('[Train] Found macro avg:', parts);
+          // Format: "macro avg  precision  recall  f1-score  support"
           if (parts.length >= 5) {
             metrics.precision = parseFloat(parts[2]) || 0;
             metrics.recall = parseFloat(parts[3]) || 0;
@@ -321,14 +321,6 @@ app.post('/api/ml/train', async (req, res) => {
           console.log('[Train] Found accuracy:', parts);
           if (parts.length >= 2) {
             metrics.accuracy = parseFloat(parts[1]) || 0;
-          }
-        }
-        // Also look for macro avg as fallback for accuracy
-        if (line.includes('macro avg') && metrics.accuracy === 0) {
-          const parts = line.trim().split(/\s+/);
-          // Use macro avg f1 as proxy for accuracy if not found
-          if (parts.length >= 5) {
-            metrics.accuracy = parseFloat(parts[4]) || 0;
           }
         }
       }

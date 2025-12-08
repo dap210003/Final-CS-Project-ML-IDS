@@ -37,8 +37,8 @@ app.use(morgan('dev'));
 // ====================
 // DATASETS API
 // ====================
-app.get('/api/datasets', async (req, res) => {
-  try {
+app.get('/api/datasets', async (req, res) => {//retrieves all datasets(2) to display, ordered by upload date
+  try {//query made to database here
     const result = await pool.query('SELECT * FROM datasets ORDER BY upload_date DESC');
     res.json(result.rows);
   } catch (err) {
@@ -46,10 +46,10 @@ app.get('/api/datasets', async (req, res) => {
   }
 });
 
-app.post('/api/datasets', async (req, res) => {
+app.post('/api/datasets', async (req, res) => {//insert a dataset including source_path, name of file, and #of features and labels
   const { filename, source, feature_count, label_count } = req.body;
   try {
-    const result = await pool.query(
+    const result = await pool.query(//query being made to database
       'INSERT INTO datasets (filename, source, feature_count, label_count) VALUES ($1, $2, $3, $4) RETURNING *',
       [filename, source, feature_count, label_count]
     );
@@ -59,7 +59,7 @@ app.post('/api/datasets', async (req, res) => {
   }
 });
 
-app.delete('/api/datasets/:id', async (req, res) => {
+app.delete('/api/datasets/:id', async (req, res) => {//delete specified dataset from table
   try {
     await pool.query('DELETE FROM datasets WHERE dataset_id = $1', [req.params.id]);
     res.json({ message: 'Dataset deleted' });
@@ -71,7 +71,7 @@ app.delete('/api/datasets/:id', async (req, res) => {
 // ====================
 // MODELS API
 // ====================
-app.get('/api/models', async (req, res) => {
+app.get('/api/models', async (req, res) => {//displays all models within database table
   try {
     const result = await pool.query('SELECT * FROM models');
     res.json(result.rows);
@@ -80,7 +80,7 @@ app.get('/api/models', async (req, res) => {
   }
 });
 
-app.get('/api/models/:id/parameters', async (req, res) => {
+app.get('/api/models/:id/parameters', async (req, res) => {//grab parameters of model specified by the given model id
   try {
     const result = await pool.query(
       'SELECT * FROM model_parameters WHERE model_id = $1',
@@ -92,7 +92,7 @@ app.get('/api/models/:id/parameters', async (req, res) => {
   }
 });
 
-app.put('/api/models/:id/parameters', async (req, res) => {
+app.put('/api/models/:id/parameters', async (req, res) => {//update the parameters of a selected model with new values also sent in request
   const { parameters } = req.body; // Array of { param_name, param_value }
   try {
     for (const param of parameters) {
@@ -110,7 +110,7 @@ app.put('/api/models/:id/parameters', async (req, res) => {
 // ====================
 // EXPERIMENTS API
 // ====================
-app.get('/api/experiments', async (req, res) => {
+app.get('/api/experiments', async (req, res) => {// get given experiments where experiment has a model and dataset defined 
   try {
     const result = await pool.query(`
       SELECT e.*, m.model_name, d.filename as dataset_name,
@@ -127,7 +127,7 @@ app.get('/api/experiments', async (req, res) => {
   }
 });
 
-app.get('/api/experiments/:id', async (req, res) => {
+app.get('/api/experiments/:id', async (req, res) => {//get experiment of given id
   try {
     const experiment = await pool.query(`
       SELECT e.*, m.model_name, d.filename as dataset_name
@@ -135,23 +135,23 @@ app.get('/api/experiments/:id', async (req, res) => {
       LEFT JOIN models m ON e.model_id = m.model_id
       LEFT JOIN datasets d ON e.dataset_id = d.dataset_id
       WHERE e.experiment_id = $1
-    `, [req.params.id]);
+    `, [req.params.id]);//gets given model and datasets needed for experiment
     
     const parameters = await pool.query(
       'SELECT * FROM experiment_parameters WHERE experiment_id = $1',
       [req.params.id]
-    );
+    );//grabs experiment paramteres of given experiment
     
     const results = await pool.query(
       'SELECT * FROM experiment_results WHERE experiment_id = $1',
       [req.params.id]
-    );
+    );//grabs experiemnt results of given experiment
     
     res.json({
       ...experiment.rows[0],
       parameters: parameters.rows,
       results: results.rows[0] || null
-    });
+    });//sends experiment,parameters, and results back to the front end application
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -183,7 +183,7 @@ app.post('/api/experiments', async (req, res) => {
   }
 });
 
-app.put('/api/experiments/:id/results', async (req, res) => {
+app.put('/api/experiments/:id/results', async (req, res) => {//places given results into table and mark experiment as finished
   const { accuracy, precision, recall, f1_score, runtime } = req.body;
   try {
     // Update experiment status
@@ -204,7 +204,7 @@ app.put('/api/experiments/:id/results', async (req, res) => {
   }
 });
 
-app.delete('/api/experiments/:id', async (req, res) => {
+app.delete('/api/experiments/:id', async (req, res) => {//delete experiment with given experimentID from all tables in database
   try {
     await pool.query('DELETE FROM experiments WHERE experiment_id = $1', [req.params.id]);
     res.json({ message: 'Experiment deleted' });
@@ -216,7 +216,7 @@ app.delete('/api/experiments/:id', async (req, res) => {
 // ====================
 // ML MODEL ENDPOINT (calls Python)
 // ====================
-const { spawn } = require('child_process');
+const { spawn } = require('child_process');//neccessary to call python scripts within the javascript file
 
 // Helper to run Python scripts
 function runPythonScript(scriptPath, args) {
@@ -235,17 +235,17 @@ function runPythonScript(scriptPath, args) {
     let stdout = '';
     let stderr = '';
 
-    proc.stdout.on('data', (data) => {
+    proc.stdout.on('data', (data) => {//stdout displays data after python script was called and returns info
       stdout += data.toString();
       console.log('[Python]', data.toString());
     });
 
-    proc.stderr.on('data', (data) => {
+    proc.stderr.on('data', (data) => {//if error in python script
       stderr += data.toString();
       console.error('[Python Error]', data.toString());
     });
 
-    proc.on('close', (code) => {
+    proc.on('close', (code) => {//closing the given call for the script
       if (code === 0) {
         resolve({ success: true, output: stdout, code });
       } else {
@@ -253,14 +253,14 @@ function runPythonScript(scriptPath, args) {
       }
     });
 
-    proc.on('error', (err) => {
+    proc.on('error', (err) => {//if error in running python script
       reject({ success: false, error: err.message, code: -1 });
     });
   });
 }
 
-const fs = require('fs');
-const yaml = require('js-yaml');
+const fs = require('fs');//neccessary for reading and writing files in Javascript
+const yaml = require('js-yaml');//used for formatting data when reading/writing
 
 app.post('/api/ml/train', async (req, res) => {
   const { experiment_id, parameters } = req.body;
@@ -343,7 +343,7 @@ app.post('/api/ml/train', async (req, res) => {
         [experiment_id]
       );
       
-      if (existingResult.rows.length > 0) {
+      if (existingResult.rows.length > 0) {//either updates the parameter tables or inserts new results if expeiment wasnt in tables prior
         await pool.query(
           `UPDATE experiment_results SET accuracy = $1, "precision" = $2, recall = $3, f1_score = $4, runtime = $5 WHERE experiment_id = $6`,
           [metrics.accuracy, metrics.precision, metrics.recall, metrics.f1_score, `${runtime} seconds`, experiment_id]
@@ -389,7 +389,7 @@ app.post('/api/ml/evaluate', async (req, res) => {
   const modelFile = model_path || 'artifacts/model.joblib';
 
   try {
-    const result = await runPythonScript('scripts/evaluate.py', [
+    const result = await runPythonScript('scripts/evaluate.py', [//calls script for evaluation of model performance
       '--config', configFile,
       '--model', modelFile
     ]);
@@ -450,6 +450,6 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, () => {//connects to port of front end of application
   console.log(`Server running on port ${PORT}`);
 });

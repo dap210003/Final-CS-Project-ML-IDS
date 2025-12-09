@@ -1,9 +1,11 @@
 project_root: .
+#path to given information to access data
 paths:
   data_raw: data/raw
   data_interim: data/interim
   data_processed: data/processed
   artifacts: artifacts
+#
 train:
   target: Label
   test_size: 0.2
